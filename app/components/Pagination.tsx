@@ -1,9 +1,14 @@
-import React, { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect } from "react";
+import {
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  FunnelIcon,
+  ChevronDoubleLeftIcon,
+} from "@heroicons/react/24/outline";
 
 interface PaginationProps {
   currentPage: number;
-  totalPages: number;
   totalItems: number;
   handlePageChange: (page: number) => void;
   itemsPerPage: number;
@@ -12,7 +17,6 @@ interface PaginationProps {
 
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
-  totalPages,
   totalItems,
   handlePageChange,
   itemsPerPage,
@@ -20,6 +24,16 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
   const [customLimit, setCustomLimit] = useState("");
   const [isCustomLimit, setIsCustomLimit] = useState(false);
+
+  // Recalculate totalPages on every change in totalItems or itemsPerPage
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  useEffect(() => {
+    // If currentPage exceeds totalPages, set it back to last valid page
+    if (currentPage > totalPages) {
+      handlePageChange(totalPages);
+    }
+  }, [totalItems, itemsPerPage, currentPage, totalPages, handlePageChange]);
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -55,35 +69,29 @@ const Pagination: React.FC<PaginationProps> = ({
     }
 
     const maxVisiblePages = 10; // Total number of pagination buttons to show
-    const halfVisible = Math.floor((maxVisiblePages - 2) / 2); // Account for the first and last page buttons
-
-    // Always include page 1 and the last page
-    const pages = new Set([1, totalPages]);
+    const halfVisible = Math.floor(maxVisiblePages / 2);
 
     let start = currentPage - halfVisible;
     let end = currentPage + halfVisible;
 
     // Adjust start and end if they exceed the total pages
-    if (start < 2) {
-      // Ensure at least one page gap before page 1
-      end += 2 - start; // Shift end right
-      start = 2; // Reset start to 2 (to leave room for page 1)
+    if (start < 1) {
+      end += 1 - start;
+      start = 1;
     }
-    if (end > totalPages - 1) {
-      // Ensure at least one page gap before the last page
-      start -= end - (totalPages - 1); // Shift start left
-      end = totalPages - 1; // Reset end to the last page before the total
+    if (end > totalPages) {
+      start -= end - totalPages;
+      end = totalPages;
     }
 
-    // Ensure start is always at least 2
-    start = Math.max(start, 2);
+    start = Math.max(start, 1);
 
-    // Create the array of page numbers
+    const pages = [];
     for (let i = start; i <= end; i++) {
-      pages.add(i);
+      pages.push(i);
     }
 
-    return Array.from(pages).sort((a, b) => a - b);
+    return pages;
   };
 
   return (
@@ -110,27 +118,36 @@ const Pagination: React.FC<PaginationProps> = ({
                 type="number"
                 value={customLimit}
                 onChange={handleCustomLimitChange}
-                className="px-2 py-1 border rounded w-20"
+                className="px-2 py-1 border rounded w-16"
                 placeholder="Limit"
+                min="1"
               />
               <button
                 onClick={handleCustomLimitSubmit}
                 className="px-2 py-1 bg-blue-500 text-white rounded flex items-center shadow-md hover:bg-blue-600"
                 title="Set Limit"
               >
-                Set
+                <FunnelIcon className="h-4 w-4" />
               </button>
             </div>
           )}
         </div>
         <div className="flex space-x-2 justify-center w-1/3">
+          {/* Button for first page */}
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50 z-10"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(1)}
+          >
+            <ChevronDoubleLeftIcon className="h-5 w-5 pointer-events-none" />
+          </button>
           {/* Button for previous page */}
           <button
-            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50"
+            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50 z-10"
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
           >
-            <ChevronLeftIcon className="h-5 w-5" />
+            <ChevronLeftIcon className="h-5 w-5 pointer-events-none" />
           </button>
           {/* Render page numbers */}
           {getPaginationRange().map((page) => (
@@ -140,7 +157,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   page === currentPage
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-500"
-                }`}
+                } z-10`}
                 onClick={() => handlePageChange(page)}
               >
                 {page}
@@ -149,15 +166,24 @@ const Pagination: React.FC<PaginationProps> = ({
           ))}
           {/* Button for next page */}
           <button
-            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50"
-            disabled={currentPage === totalPages || totalItems === 0}
+            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50 z-10"
+            disabled={currentPage >= totalPages} // Prevent moving to next if on the last page
             onClick={() => handlePageChange(currentPage + 1)}
           >
-            <ChevronRightIcon className="h-5 w-5" />
+            <ChevronRightIcon className="h-5 w-5 pointer-events-none" />
+          </button>
+          {/* Button for last page */}
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-full disabled:opacity-50 z-10"
+            disabled={currentPage >= totalPages}
+            onClick={() => handlePageChange(totalPages)}
+          >
+            <ChevronDoubleRightIcon className="h-5 w-5 pointer-events-none" />
           </button>
         </div>
         <div className="text-right w-1/3">
-          Page {currentPage} of {totalItems === 0 ? 1 : totalPages}, Total items: {totalItems}
+          Page {currentPage} of {totalItems === 0 ? 1 : totalPages}, Total
+          items: {totalItems}
         </div>
       </div>
     </div>

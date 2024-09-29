@@ -7,9 +7,10 @@ import { CreateRoleDto, RoleDto } from "@/app/Dto/role/role.dto";
 import TableRole from "./TableRole";
 import TableSearch from "@/app/components/TableSearch";
 import CreateRole from "./CreateRole";
+import { BaseDto } from "@/app/Dto/Base/base.dto";
 
 const Roles: React.FC = () => {
-  // Tabke Data
+  // Table Data
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [tableData, setTableData] = useState<RoleDto[]>([]);
@@ -49,7 +50,12 @@ const Roles: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getRoles(currentPage, itemsPerPage, searchTerm);
+        const params: BaseDto = {
+          page: currentPage,
+          limit: itemsPerPage,
+          keyword: searchTerm,
+        };
+        const response = await getRoles(params);
         if (response && Array.isArray(response.data)) {
           setTableData(response.data);
           setTotalItems(response.metadata.total);
@@ -93,7 +99,12 @@ const Roles: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteRoles(id);
-      const updatedResponse = await getRoles(currentPage, itemsPerPage, searchTerm);
+      const params: BaseDto = {
+        page: currentPage,
+        limit: itemsPerPage,
+        keyword: searchTerm,
+      };
+      const updatedResponse = await getRoles(params);
       if (updatedResponse && Array.isArray(updatedResponse.data)) {
         setTableData(updatedResponse.data);
         setTotalItems(updatedResponse.metadata.total);
@@ -132,12 +143,17 @@ const Roles: React.FC = () => {
 
     try {
       if (isEditMode && editRoleId) {
-        console.log("Updating role with ID:", editRoleId);
+        
         const response = await updateRoles(editRoleId, formData);
-        console.log("Update response:", response);
+       
         if (response && response.data) {
-          const updatedResponse = await getRoles(currentPage, itemsPerPage, searchTerm);
-          console.log("Updated roles response:", updatedResponse);
+          const params: BaseDto = {
+            page: currentPage,
+            limit: itemsPerPage,
+            keyword: searchTerm,
+          };
+          const updatedResponse = await getRoles(params);
+          
           if (updatedResponse && Array.isArray(updatedResponse.data)) {
             setTableData(updatedResponse.data);
             setTotalItems(updatedResponse.metadata.total);
@@ -153,13 +169,18 @@ const Roles: React.FC = () => {
           console.error("Failed to update role:", response);
           toast.error("Failed to update role.", { autoClose: 2000 });
         }
+
       } else {
-        console.log("Creating new role");
         const response = await createRoles(formData);
-        console.log("Create response:", response);
+
         if (response && response.data) {
-          const updatedResponse = await getRoles(1, itemsPerPage, searchTerm);
-          console.log("Updated roles response:", updatedResponse);
+          const params: BaseDto = {
+            page: 1,
+            limit: itemsPerPage,
+            keyword: searchTerm,
+          };
+          const updatedResponse = await getRoles(params);
+
           if (updatedResponse && Array.isArray(updatedResponse.data)) {
             setTableData(updatedResponse.data);
             setTotalItems(updatedResponse.metadata.total);
@@ -177,6 +198,7 @@ const Roles: React.FC = () => {
           toast.error("Failed to create role.", { autoClose: 2000 });
         }
       }
+
     } catch (error) {
       console.error("Error creating/updating role:", error);
       toast.error("Error creating/updating role.", { autoClose: 2000 });

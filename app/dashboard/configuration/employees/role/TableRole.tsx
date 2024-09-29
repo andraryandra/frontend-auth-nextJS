@@ -105,7 +105,6 @@ const TableRole: React.FC<RoleTableProps> = ({
       {/* Pagination */}
       <Pagination
         currentPage={currentPage}
-        totalPages={totalPages}
         totalItems={totalItems}
         handlePageChange={handlePageChange}
         itemsPerPage={itemsPerPage}
@@ -114,7 +113,7 @@ const TableRole: React.FC<RoleTableProps> = ({
 
       {/* Delete Confirmation Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 shadow-lg max-w-sm w-full">
             <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
             <p>Are you sure you want to delete this role?</p>

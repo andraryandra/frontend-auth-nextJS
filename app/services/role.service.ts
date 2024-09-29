@@ -1,16 +1,15 @@
+import { BaseDto } from "../Dto/Base/base.dto";
 import { CreateRoleDto, UpdateRoleDto } from "../Dto/role/role.dto";
 import { fetchData } from "./api.service";
 
 export const getRoles = async (
-  page: number,
-  limit: number,
-  keyword?: string
+  params: BaseDto
 ) => {
   try {
     const data = await fetchData({
       method: "GET",
       endpoint: "/roles",
-      params: { page, limit, keyword },
+      params: { ...params },
     });
     return data;
   } catch (error) {

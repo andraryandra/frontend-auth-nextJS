@@ -5,12 +5,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --scrollbar-bg: #b3d9ff; /* Light blue color for scrollbar background */
+  --scrollbar-thumb: #5eadfc; /* Light blue color for scrollbar thumb */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --scrollbar-bg: #4d4d4d; /* Darker color for scrollbar background in dark mode */
+    --scrollbar-thumb: #666666; /* Darker color for scrollbar thumb in dark mode */
   }
 }
 
@@ -20,11 +24,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 6px;
+  border: 3px solid var(--scrollbar-bg);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -37,4 +57,3 @@ body {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
-
