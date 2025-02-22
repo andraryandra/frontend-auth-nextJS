@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { loginUser } from "../services/auth.service";
+import { loginUser } from "../tools/services/auth.service";
 // import Image from "next/image";
 
 const LoginForm = () => {
@@ -19,16 +19,11 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      console.log("Sending login request with:", { username, password });
-      const data = await loginUser(username, password); // Panggil fungsi login dari service
+      const data = await loginUser(username, password);
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("accessToken", data.accessToken); 
+      router.push("/dashboard"); 
 
-      console.log("Response received:", data);
-
-      if (data.accessToken) {
-        localStorage.setItem("isLoggedIn", "true"); // Simpan status login
-        localStorage.setItem("accessToken", data.accessToken); // Simpan access token
-        router.push("/dashboard"); // Arahkan ke dashboard setelah login
-      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message); // Tangani kesalahan

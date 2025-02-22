@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import { setCookie, deleteCookie, getCookie } from "cookies-next"; // Impor setCookie, deleteCookie, dan getCookie
-import { UserDto } from "../Dto/authDto/UserDto";
 import { jwtDecode } from "jwt-decode";
+import toast from "react-hot-toast";
+import { UserDto } from "../Dto/authDto/UserDto";
 
 const API_URL = `${process.env.NEXT_PUBLIC_SERVER}/auth/`;
 
@@ -17,7 +18,10 @@ export const loginUser = async (username: string, password: string) => {
     // Jika login berhasil, set cookie 'isLoggedIn'
     if (response.data) {
       setCookie("isLoggedIn", "true", { maxAge: 60 * 60 * 24 }); // Set cookie untuk 24 jam
-      setCookie("accessToken", response.data.accessToken, { maxAge: 60 * 60 * 24 }); // Set cookie untuk access token
+      setCookie("accessToken", response.data.accessToken, {
+        maxAge: 60 * 60 * 24,
+      }); // Set cookie untuk access token
+      toast.success("Login success.");
     }
 
     return response.data;
@@ -42,8 +46,8 @@ export const logoutUser = () => {
   deleteCookie("isLoggedIn");
   deleteCookie("accessToken");
   localStorage.clear();
+  toast.success("Logout success.");
 };
-
 
 // Fungsi untuk mendapatkan access token
 export const getAccessToken = () => {

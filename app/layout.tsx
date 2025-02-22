@@ -1,16 +1,19 @@
 // app/layout.tsx
 
-import React from 'react';
-import './globals.css'; // Pastikan untuk mengimpor CSS global Anda
-import AuthWrapper from './components/AuthWrapper';
+import React from "react";
+import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
-        <AuthWrapper>
-          {children}
-        </AuthWrapper>
+       <Toaster position="top-right" />
+        {children}
       </body>
     </html>
   );

@@ -57,3 +57,8 @@ body {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* styles/globals.css */
+.active-link {
+  background-color: #e2e8f0; /* Warna abu-abu terang */
+}

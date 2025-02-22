@@ -7,14 +7,16 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { getUserInfo, logoutUser } from "@/app/services/auth.service";
-import { UserDto } from "@/app/Dto/authDto/UserDto";
+import { UserDto } from "@/app/tools/Dto/authDto/UserDto";
 import Link from "next/link";
+import { getUserInfo, logoutUser } from "@/app/tools/services/auth.service";
+import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const [user, setUser] = useState<UserDto | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const userInfo = getUserInfo();
@@ -42,6 +44,11 @@ const Navbar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [profileMenuRef]);
+  
+  const handleLogout = () => {
+    logoutUser();
+    router.replace("/login");
+  }
 
   return (
     <header className="flex items-center justify-between h-16 bg-white shadow-md px-4">
@@ -95,8 +102,7 @@ const Navbar: React.FC = () => {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    logoutUser();
-                    window.location.replace("/login");
+                    handleLogout();
                   }}
                   className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >

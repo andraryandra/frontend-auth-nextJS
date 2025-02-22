@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import 'react-toastify/dist/ReactToastify.css'; // Pastikan CSS diimpor di sini
-import { getRoles, createRoles, updateRoles, deleteRoles } from "@/app/services/role.service";
-import { toast, ToastContainer } from "react-toastify";
-import { CreateRoleDto, RoleDto } from "@/app/Dto/role/role.dto";
+import { getRoles, createRoles, updateRoles, deleteRoles } from "@/app/tools/services/role.service";
+import { CreateRoleDto, RoleDto } from "@/app/tools/Dto/role/role.dto";
 import TableRole from "./TableRole";
 import TableSearch from "@/app/components/TableSearch";
 import CreateRole from "./CreateRole";
-import { BaseDto } from "@/app/Dto/Base/base.dto";
+import { BaseDto } from "@/app/tools/Dto/Base/base.dto";
+import toast from 'react-hot-toast';
 
 const Roles: React.FC = () => {
   // Table Data
@@ -113,10 +112,10 @@ const Roles: React.FC = () => {
         console.error("Expected an array but got:", updatedResponse);
         setTableData([]);
       }
-      toast.success("Role deleted successfully!", { autoClose: 2000 });
+      toast.success("Role deleted successfully!");
     } catch (error) {
       console.error("Error deleting role:", error);
-      toast.error("Error deleting role.", { autoClose: 2000 });
+      toast.error("Error deleting role.");
     }
   };
 
@@ -164,10 +163,10 @@ const Roles: React.FC = () => {
           }
 
           handleCloseModal();
-          toast.success("Role updated successfully!", { autoClose: 2000 });
+          toast.success("Role updated successfully!");
         } else {
           console.error("Failed to update role:", response);
-          toast.error("Failed to update role.", { autoClose: 2000 });
+          toast.error("Failed to update role.");
         }
 
       } else {
@@ -192,16 +191,16 @@ const Roles: React.FC = () => {
           }
 
           handleCloseModal();
-          toast.success("Role created successfully!", { autoClose: 2000 });
+          toast.success("Role created successfully!");
         } else {
           console.error("Failed to create role:", response);
-          toast.error("Failed to create role.", { autoClose: 2000 });
+          toast.error("Failed to create role.");
         }
       }
 
     } catch (error) {
       console.error("Error creating/updating role:", error);
-      toast.error("Error creating/updating role.", { autoClose: 2000 });
+      toast.error("Error creating/updating role.");
     }
   };
 
@@ -215,7 +214,6 @@ const Roles: React.FC = () => {
 
   return (
     <div>
-      <ToastContainer />
       {/* Search and Add Role in one line */}
       <div className="flex justify-between mb-4">
         <TableSearch onSearch={handleSearch} onReset={handleResetSearch} searchTerm={searchTerm} />
@@ -235,7 +233,7 @@ const Roles: React.FC = () => {
         setItemsPerPage={setItemsPerPage}
       />
 
-      {/* Modal Edit*/}
+      {/* Modal Edit & Create */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           {/* Background abu-abu */}
